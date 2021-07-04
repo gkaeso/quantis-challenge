@@ -13,6 +13,8 @@ public class CompanyDTO implements Serializable {
 
     private CompanySector sector;
 
+    private Integer employeeNb;
+
     public CompanyDTO() {
     }
 
@@ -46,6 +48,14 @@ public class CompanyDTO implements Serializable {
 
     public void setSector(CompanySector sector) {
         this.sector = sector;
+    }
+
+    public Integer getEmployeeNb() {
+        return employeeNb;
+    }
+
+    public void setEmployeeNb(Integer employeeNb) {
+        this.employeeNb = employeeNb;
     }
 
     @Override

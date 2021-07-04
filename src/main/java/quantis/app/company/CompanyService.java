@@ -31,6 +31,7 @@ public class CompanyService {
                     .stream()
                     .map(company -> modelMapper.map(company, CompanyDTO.class))
                     .collect(Collectors.toList());
+            companiesDto.forEach(dto -> dto.setEmployeeNb(repository.countEmployeesByCompanyId(dto.getId())));
         }
 
         return companiesDto;
@@ -38,7 +39,11 @@ public class CompanyService {
 
     public CompanyDTO get(Long id) throws CompanyNotFoundException {
         Company company = repository.findById(id).orElseThrow(() -> new CompanyNotFoundException(id));
-        return modelMapper.map(company, CompanyDTO.class);
+
+        CompanyDTO dto = modelMapper.map(company, CompanyDTO.class);
+        dto.setEmployeeNb(repository.countEmployeesByCompanyId(company.getId()));
+
+        return dto;
     }
 
     public List<CompanyDTO> getBySector(String name) throws IllegalCompanySectorException {
@@ -57,6 +62,7 @@ public class CompanyService {
                     .stream()
                     .map(company -> modelMapper.map(company, CompanyDTO.class))
                     .collect(Collectors.toList());
+            companiesDto.forEach(dto -> dto.setEmployeeNb(repository.countEmployeesByCompanyId(dto.getId())));
         }
 
         return companiesDto;
@@ -68,7 +74,6 @@ public class CompanyService {
         }
         Company company = modelMapper.map(companyDto, Company.class);
 
-        System.out.println("Company: " + company.getSector());
         repository.save(company);
 
         return modelMapper.map(company, CompanyDTO.class);
