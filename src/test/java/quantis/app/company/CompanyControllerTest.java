@@ -10,6 +10,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import quantis.app.company.exception.CompanyNotFoundException;
+import quantis.app.company.exception.IllegalCompanySectorException;
 
 import static org.junit.Assert.assertNotNull;
 
@@ -66,6 +67,25 @@ public class CompanyControllerTest {
         when(service.get(anyLong())).thenThrow(CompanyNotFoundException.class);
         mockMvc.perform(get("/company/0"))
                 .andExpect(status().isNotFound());
+    }
+
+    @Test
+    public void testGetBySector() throws Exception {
+        mockMvc.perform(get("/company/sector/ICT"))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    public void testGetBySectorLowerCase() throws Exception {
+        mockMvc.perform(get("/company/sector/ict"))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    public void testGetBySectorInvalidSector() throws Exception {
+        when(service.getBySector(any(String.class))).thenThrow(IllegalCompanySectorException.class);
+        mockMvc.perform(get("/company/sector/INVALID_SECTOR"))
+                .andExpect(status().isBadRequest());
     }
 
     @Test

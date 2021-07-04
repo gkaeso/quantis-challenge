@@ -5,6 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import quantis.app.company.exception.CompanyNotFoundException;
+import quantis.app.company.exception.IllegalCompanySectorException;
 import quantis.app.company.exception.InvalidCompanyDTOException;
 import quantis.app.employee.exception.InvalidEmployeeDTOException;
 
@@ -32,6 +33,12 @@ public class CompanyController {
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody CompanyDTO get(@PathVariable Long id) throws CompanyNotFoundException {
         return service.get(id);
+    }
+
+    @GetMapping("/sector/{name}")
+    @ResponseStatus(HttpStatus.OK)
+    List<CompanyDTO> getBySector(@PathVariable String name) {
+        return service.getBySector(name);
     }
 
     @PostMapping("/add")
@@ -63,6 +70,14 @@ public class CompanyController {
     @ExceptionHandler(InvalidEmployeeDTOException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseEntity<String> handleEntityNotFoundException(InvalidEmployeeDTOException exc) {
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(exc.getMessage());
+    }
+
+    @ExceptionHandler(IllegalCompanySectorException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseEntity<String> handleEntityNotFoundException(IllegalCompanySectorException exc) {
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
                 .body(exc.getMessage());

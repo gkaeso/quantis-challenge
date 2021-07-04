@@ -6,6 +6,7 @@ import org.junit.Test;
 import org.modelmapper.ModelMapper;
 
 import quantis.app.company.exception.CompanyNotFoundException;
+import quantis.app.company.exception.IllegalCompanySectorException;
 import quantis.app.company.exception.InvalidCompanyDTOException;
 
 import java.util.List;
@@ -24,6 +25,7 @@ public class CompanyServiceTest {
     private Company company;
     private List<CompanyDTO> dtoList;
     private List<Company> companyList;
+    private static final String INVALID_COMPANY_SECTOR = "INVALID_COMPANY_SECTOR";
 
     private final ModelMapper modelMapper = new ModelMapper();
 
@@ -84,6 +86,22 @@ public class CompanyServiceTest {
             service.get(-1L);
         });
         verify(repository, times(1)).findById(anyLong());
+    }
+
+    @Test
+    public void testGetBySector() {
+        when(repository.findBySector(any(CompanySector.class))).thenReturn(companyList);
+        List<CompanyDTO> dtos = service.getBySector(CompanySector.ICT.name());
+        assertNotNull(dtos);
+        verify(repository, times(1)).findBySector(any(CompanySector.class));
+    }
+
+    @Test
+    public void testGetBySectorInvalid() {
+        assertThrows(IllegalCompanySectorException.class, () -> {
+            service.getBySector(INVALID_COMPANY_SECTOR);
+        });
+        verify(repository, times(0)).findBySector(any(CompanySector.class));
     }
 
     @Test

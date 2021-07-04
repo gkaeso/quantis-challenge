@@ -3,6 +3,7 @@ package quantis.app.company;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import quantis.app.company.exception.CompanyNotFoundException;
+import quantis.app.company.exception.IllegalCompanySectorException;
 import quantis.app.company.exception.InvalidCompanyDTOException;
 import quantis.app.utils.DTOValidator;
 
@@ -38,6 +39,27 @@ public class CompanyService {
     public CompanyDTO get(Long id) throws CompanyNotFoundException {
         Company company = repository.findById(id).orElseThrow(() -> new CompanyNotFoundException(id));
         return modelMapper.map(company, CompanyDTO.class);
+    }
+
+    public List<CompanyDTO> getBySector(String name) throws IllegalCompanySectorException {
+        List<CompanyDTO> companiesDto = Collections.emptyList();
+
+        CompanySector sector;
+        try {
+            sector = CompanySector.valueOf(name.toUpperCase());
+        } catch (IllegalArgumentException exc) {
+            throw new IllegalCompanySectorException(name);
+        }
+
+        List<Company> companies = repository.findBySector(sector);
+        if (!companies.isEmpty()) {
+            companiesDto = companies
+                    .stream()
+                    .map(company -> modelMapper.map(company, CompanyDTO.class))
+                    .collect(Collectors.toList());
+        }
+
+        return companiesDto;
     }
 
     public CompanyDTO create(CompanyDTO companyDto) throws InvalidCompanyDTOException {
