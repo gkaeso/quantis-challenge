@@ -1,5 +1,7 @@
 package quantis.app.employee;
 
+import quantis.app.company.Company;
+
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
@@ -21,6 +23,10 @@ public class Employee {
     @NotBlank
     @Email
     private String email;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "company_id", nullable = false)
+    private Company company;
 
     public Employee() {
     }
@@ -55,6 +61,14 @@ public class Employee {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public Company getCompany() {
+        return company;
+    }
+
+    public void setCompany(Company company) {
+        this.company = company;
     }
 
 }

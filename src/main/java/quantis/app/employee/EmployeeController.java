@@ -1,6 +1,5 @@
 package quantis.app.employee;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -30,6 +29,11 @@ public class EmployeeController {
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody EmployeeDTO get(@PathVariable Long id) throws EmployeeNotFoundException {
         return service.get(id);
+    }
+    @GetMapping("/company/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody List<EmployeeDTO> getByCompany(@PathVariable Long id) {
+        return service.getByCompany(id);
     }
 
     @PostMapping("/add")

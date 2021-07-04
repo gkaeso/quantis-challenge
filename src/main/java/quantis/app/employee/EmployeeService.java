@@ -40,6 +40,20 @@ public class EmployeeService {
         return modelMapper.map(employee, EmployeeDTO.class);
     }
 
+    public List<EmployeeDTO> getByCompany(Long id) {
+        List<Employee> employees = repository.findByCompany(id);
+
+        List<EmployeeDTO> employeesDTO = Collections.emptyList();
+        if (!employees.isEmpty()) {
+            employeesDTO = employees
+                    .stream()
+                    .map(emp -> modelMapper.map(emp, EmployeeDTO.class))
+                    .collect(Collectors.toList());
+        }
+
+        return employeesDTO;
+    }
+
     public EmployeeDTO create(EmployeeDTO employeeDTO) throws InvalidEmployeeDTOException {
         if (!DTOValidator.isValid(employeeDTO)) {
             throw new InvalidEmployeeDTOException();

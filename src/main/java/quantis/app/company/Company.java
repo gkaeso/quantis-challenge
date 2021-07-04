@@ -1,7 +1,10 @@
 package quantis.app.company;
 
+import quantis.app.employee.Employee;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
+import java.util.Set;
 
 @Entity
 @Table(name = "Company")
@@ -18,6 +21,9 @@ public class Company {
 
     @Enumerated(EnumType.STRING)
     private CompanySector sector;
+
+    @OneToMany(mappedBy = "company", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private Set<Employee> employees;
 
     public Company() {
     }
@@ -52,6 +58,14 @@ public class Company {
 
     public void setSector(CompanySector sector) {
         this.sector = sector;
+    }
+
+    public Set<Employee> getEmployees() {
+        return employees;
+    }
+
+    public void setEmployees(Set<Employee> employees) {
+        this.employees = employees;
     }
 
 }

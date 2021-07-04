@@ -4,6 +4,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import org.modelmapper.ModelMapper;
+import quantis.app.company.exception.CompanyNotFoundException;
 import quantis.app.employee.exception.EmployeeNotFoundException;
 import quantis.app.employee.exception.InvalidEmployeeDTOException;
 
@@ -81,6 +82,24 @@ public class EmployeeServiceTest {
             service.get(-1L);
         });
         verify(repository, times(1)).findById(anyLong());
+    }
+
+    @Test
+    public void testGetByCompany() {
+        when(repository.findByCompany(anyLong())).thenReturn(empList);
+        List<EmployeeDTO> dtos = service.getByCompany(1L);
+        assertNotNull(dtos);
+        assertFalse(dtos.isEmpty());
+        verify(repository, times(1)).findByCompany(anyLong());
+    }
+
+    @Test
+    public void testGetByCompanyDoesNotExist() {
+        when(repository.findByCompany(anyLong())).thenThrow(CompanyNotFoundException.class);
+        assertThrows(CompanyNotFoundException.class, () -> {
+            service.getByCompany(-1L);
+        });
+        verify(repository, times(1)).findByCompany(anyLong());
     }
 
     @Test

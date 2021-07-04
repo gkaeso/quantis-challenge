@@ -9,8 +9,11 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import quantis.app.company.exception.CompanyNotFoundException;
 import quantis.app.employee.exception.EmployeeNotFoundException;
 import quantis.app.employee.exception.InvalidEmployeeDTOException;
+
+import java.util.List;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -27,6 +30,7 @@ public class EmployeeControllerTest {
     private MockMvc mockMvc;
     private EmployeeService service;
     private EmployeeDTO dto;
+    private List<EmployeeDTO> dtoList;
 
     @Before
     public void setupMock() {
@@ -41,6 +45,8 @@ public class EmployeeControllerTest {
         dto.setFirstName("John");;
         dto.setLastName("Lennon");
         dto.setEmail("jlennon@gmail.com");
+
+        dtoList = List.of(dto);
     }
 
     @Test
@@ -60,6 +66,21 @@ public class EmployeeControllerTest {
         when(service.get(anyLong())).thenReturn(dto);
         mockMvc.perform(get("/employee/1"))
                 .andExpect(status().isOk());
+    }
+
+    @Test
+    public void testGetByCompany() throws Exception {
+        when(service.getByCompany(anyLong())).thenReturn(dtoList);
+        mockMvc.perform(get("/employee/company/1"))
+                .andExpect(status().isOk());
+        verify(service, times(1)).getByCompany(anyLong());
+    }
+
+    @Test
+    public void testGetByCompanyDoesNotExist() throws Exception {
+        when(service.getByCompany(anyLong())).thenThrow(CompanyNotFoundException.class);
+        mockMvc.perform(get("/employee/company/0"))
+                .andExpect(status().isNotFound());
     }
 
     @Test
