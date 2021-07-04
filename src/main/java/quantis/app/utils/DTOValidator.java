@@ -1,5 +1,6 @@
 package quantis.app.utils;
 
+import quantis.app.company.CompanyDTO;
 import quantis.app.employee.EmployeeDTO;
 
 public class DTOValidator {
@@ -10,4 +11,8 @@ public class DTOValidator {
                 emp.getEmail() != null && !emp.getEmail().isEmpty();
     }
 
+    public static boolean isValid(CompanyDTO company) {
+        return company.getName() != null && !company.getName().isEmpty() &&
+                company.getSector() != null;
+    }
 }
